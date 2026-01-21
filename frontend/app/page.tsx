@@ -91,7 +91,13 @@ export default function Home() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Image src="/logo/logos.png" alt="OpenGuard AI" width={40} height={40} />
+          <img
+            src="/logo/logo.png"
+            alt="OpenGuard AI"
+            width={100}
+            height={100}
+          />
+
             <h1 className="text-xl font-bold">OpenGuard AI</h1>
           </div>
 
