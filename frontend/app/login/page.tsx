@@ -1,0 +1,104 @@
+"use client";
+
+import Image from "next/image";
+import { useState } from "react";
+import Link from "next/link";
+
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    try {
+      const res = await fetch("http://127.0.0.1:8000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      if (!res.ok) {
+        throw new Error("Invalid credentials");
+      }
+  
+      const data = await res.json();
+  
+   
+      document.cookie = `token=${data.access_token}; path=/`;
+
+  
+ 
+      window.location.href = "/";
+    } catch (err) {
+      alert("Login failed");
+    }
+  };
+  
+
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        
+        {/* LOGO */}
+        <div className="flex justify-center mb-6">
+          <Image
+            src="/logo/logos.png"
+            alt="OpenGuard AI Logo"
+            width={200}
+            height={200}
+            priority
+          />
+        </div>
+
+        <h1 className="text-2xl font-bold text-center mb-2">
+          OpenGuard AI
+        </h1>
+        <p className="text-sm text-gray-600 text-center mb-6">
+          Sign in to moderation dashboard
+        </p>
+
+        {/* LOGIN FORM */}
+        <form onSubmit={handleLogin} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email address"
+            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+        <button
+            type="submit"
+            className="w-full bg-black text-white py-2 rounded hover:opacity-90"
+            >
+            Login
+        </button>
+
+        <Link
+            href="/register"
+            className="w-full block text-center border border-black text-black py-2 rounded hover:bg-gray-100"
+            >
+            Register
+        </Link>
+
+        </form>
+
+        {/* FOOTER */}
+        <p className="text-xs text-gray-500 text-center mt-6">
+          © {new Date().getFullYear()} OpenGuard AI
+        </p>
+      </div>
+    </main>
+  );
+}
