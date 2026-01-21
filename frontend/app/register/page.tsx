@@ -3,6 +3,11 @@
 import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -11,18 +16,44 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
+  const router = useRouter();
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+const handleRegister = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    setError("");
-    // TEMP: backend registration will be added later
-    console.log("Register:", { name, email, password });
-  };
+  if (password !== confirmPassword) {
+    setError("Passwords do not match");
+    return;
+  }
+
+  setError("");
+
+  try {
+    // 1️⃣ Create user in Firebase Authentication
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const user = userCredential.user;
+
+    // 2️⃣ Save user profile to Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      name,
+      email,
+      role: "user", // later: admin / reviewer
+      createdAt: serverTimestamp(),
+    });
+
+    // 3️⃣ Redirect to login
+    alert("Registration successful! Please login.");
+    router.push("/login");
+
+  } catch (err: any) {
+    setError(err.message || "Registration failed");
+  }
+};
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

@@ -4,36 +4,37 @@ import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
-    try {
-      const res = await fetch("http://127.0.0.1:8000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      if (!res.ok) {
-        throw new Error("Invalid credentials");
-      }
-  
-      const data = await res.json();
-  
-   
-      document.cookie = `token=${data.access_token}; path=/`;
+  const router = useRouter();
 
-  
- 
-      window.location.href = "/";
+    const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+        const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+        );
+
+        const user = userCredential.user;
+        const token = await user.getIdToken();
+
+        document.cookie = `token=${token}; path=/`;
+
+        router.push("/");
     } catch (err) {
-      alert("Login failed");
+        alert("Invalid email or password");
     }
-  };
+    };
+
   
 
   return (

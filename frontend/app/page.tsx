@@ -1,6 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 type ResultType = {
   label: string;
@@ -11,6 +15,8 @@ type ResultType = {
 type Mode = "text" | "image" | "video" | "audio";
 
 export default function Home() {
+  const router = useRouter(); // ✅ hook INSIDE component
+
   const [mode, setMode] = useState<Mode>("text");
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -57,7 +63,7 @@ export default function Home() {
 
       const data = await res.json();
       setResult(data);
-    } catch (err) {
+    } catch {
       setError("Backend not reachable or error occurred.");
     } finally {
       setLoading(false);
@@ -71,99 +77,125 @@ export default function Home() {
     setError("");
   };
 
+  const handleLogout = async () => {
+    await signOut(auth);
+    document.cookie = "token=; Max-Age=0; path=/";
+    router.push("/login");
+  };
+
   const isToxic = result?.label === "toxic";
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-xl">
-        <h1 className="text-2xl font-bold mb-1">🛡️ OpenGuard AI</h1>
-        <p className="text-sm text-gray-600 mb-4">
-          Multimodal AI content moderation
-        </p>
+    <div className="min-h-screen bg-gray-100">
+      {/* NAVBAR */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <Image src="/logo/logos.png" alt="OpenGuard AI" width={40} height={40} />
+            <h1 className="text-xl font-bold">OpenGuard AI</h1>
+          </div>
 
-        {/* MODE SELECTOR */}
-        <select
-          value={mode}
-          onChange={(e) => {
-            setMode(e.target.value as Mode);
-            reset();
-          }}
-          className="border p-2 rounded mb-3 w-full"
-        >
-          <option value="text">Text</option>
-          <option value="image">Image</option>
-          <option value="video">Video</option>
-          <option value="audio">Audio</option>
-        </select>
-
-        {/* INPUT */}
-        {mode === "text" ? (
-          <textarea
-            className="w-full border rounded p-3 mb-2"
-            rows={4}
-            placeholder="Enter text to analyze..."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-        ) : (
-          <input
-            type="file"
-            className="w-full mb-2"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
-        )}
-
-        {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
-
-        {/* ACTION BUTTONS */}
-        <div className="flex gap-2">
           <button
-            onClick={analyzeContent}
-            disabled={loading}
-            className="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
+            onClick={handleLogout}
+            className="text-sm border px-4 py-2 rounded hover:bg-gray-100"
           >
-            {loading ? "Analyzing..." : "Analyze"}
-          </button>
-
-          <button onClick={reset} className="border px-4 py-2 rounded">
-            Reset
+            Logout
           </button>
         </div>
+      </header>
 
-        {/* RESULT */}
-        {result && (
-          <div
-            className={`mt-6 p-4 border rounded ${
-              isToxic ? "border-red-500 bg-red-50" : "border-green-500 bg-green-50"
-            }`}
+      {/* DASHBOARD */}
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        <h2 className="text-2xl font-semibold mb-2">
+          Content Moderation Dashboard
+        </h2>
+        <p className="text-gray-600 mb-6">
+          Analyze and moderate text, image, video, and audio content
+        </p>
+
+        <div className="bg-white p-6 rounded-xl shadow-md max-w-2xl">
+          <select
+            value={mode}
+            onChange={(e) => {
+              setMode(e.target.value as Mode);
+              reset();
+            }}
+            className="border p-2 rounded mb-4 w-full"
           >
-            <p className="font-semibold mb-1">
-              Status:{" "}
-              <span className={isToxic ? "text-red-600" : "text-green-600"}>
-                {result.label.toUpperCase()}
-              </span>
-            </p>
+            <option value="text">Text</option>
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+            <option value="audio">Audio</option>
+          </select>
 
-            <p className="text-sm mb-2">
-              Recommended Action: <b>{result.action}</b>
-            </p>
+          {mode === "text" ? (
+            <textarea
+              className="w-full border rounded p-3 mb-3"
+              rows={4}
+              placeholder="Enter text to analyze..."
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+          ) : (
+            <input
+              type="file"
+              className="w-full mb-3"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+            />
+          )}
 
-            <div className="text-sm mb-1">Confidence</div>
-            <div className="w-full bg-gray-200 rounded h-3">
-              <div
-                className={`h-3 rounded ${
-                  isToxic ? "bg-red-500" : "bg-green-500"
-                }`}
-                style={{ width: `${result.confidence * 100}%` }}
-              />
-            </div>
+          {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
 
-            <p className="text-xs mt-1">
-              {(result.confidence * 100).toFixed(1)}%
-            </p>
+          <div className="flex gap-2 mb-4">
+            <button
+              onClick={analyzeContent}
+              disabled={loading}
+              className="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
+            >
+              {loading ? "Analyzing..." : "Analyze"}
+            </button>
+
+            <button onClick={reset} className="border px-4 py-2 rounded">
+              Reset
+            </button>
           </div>
-        )}
-      </div>
-    </main>
+
+          {result && (
+            <div
+              className={`p-4 border rounded ${
+                isToxic
+                  ? "border-red-500 bg-red-50"
+                  : "border-green-500 bg-green-50"
+              }`}
+            >
+              <p className="font-semibold mb-1">
+                Status:{" "}
+                <span className={isToxic ? "text-red-600" : "text-green-600"}>
+                  {result.label.toUpperCase()}
+                </span>
+              </p>
+
+              <p className="text-sm mb-2">
+                Recommended Action: <b>{result.action}</b>
+              </p>
+
+              <div className="text-sm mb-1">Confidence</div>
+              <div className="w-full bg-gray-200 rounded h-3">
+                <div
+                  className={`h-3 rounded ${
+                    isToxic ? "bg-red-500" : "bg-green-500"
+                  }`}
+                  style={{ width: `${result.confidence * 100}%` }}
+                />
+              </div>
+
+              <p className="text-xs mt-1">
+                {(result.confidence * 100).toFixed(1)}%
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
