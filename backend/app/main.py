@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import text
+
+from app.routers import text, image, video, audio
 
 app = FastAPI(
     title="OpenGuard AI",
-    description="Open-source multimodal content moderation framework",
-    version="0.1.0"
+    description="Multimodal AI content moderation framework",
+    version="0.2.0"
 )
 
 app.add_middleware(
@@ -17,6 +18,9 @@ app.add_middleware(
 )
 
 app.include_router(text.router)
+app.include_router(image.router)
+app.include_router(video.router)
+app.include_router(audio.router)
 
 @app.get("/")
 def root():
