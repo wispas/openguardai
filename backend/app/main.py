@@ -3,7 +3,7 @@ from app.routers import text
 
 app = FastAPI(
     title="OpenGuard AI",
-    description="Open-source multimodal content moderation framework",
+    description="Open-source multimodal content moderation frameworks",
     version="0.1.0"
 )
 
