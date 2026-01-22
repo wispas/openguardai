@@ -6,6 +6,17 @@ It is inspired by large-scale content moderation systems used in modern social m
 The project focuses on **clean architecture, explainability, and scalability**, making it suitable for research, portfolios, and future production systems.
 
 ---
+🌍 Live Deployment
+
+OpenGuard AI is deployed using a modern split-architecture setup, separating frontend and backend for scalability and clarity.
+
+🔗 Live URLs
+
+Frontend (Vercel):
+👉 https://openguardai.vercel.app
+
+Backend API (Render):
+👉 https://openguardai-backend.onrender.com
 
 ## 🚀 Features
 
