@@ -23,6 +23,8 @@ export default function Home() {
   const [result, setResult] = useState<ResultType | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 
   const analyzeContent = async () => {
     setError("");
@@ -44,7 +46,7 @@ export default function Home() {
       let res;
 
       if (mode === "text") {
-        res = await fetch("http://127.0.0.1:8000/analyze/text", {
+        res = await fetch(`${API_URL}/analyze/text`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content: text }),
@@ -53,7 +55,7 @@ export default function Home() {
         const formData = new FormData();
         formData.append("file", file as File);
 
-        res = await fetch(`http://127.0.0.1:8000/analyze/${mode}`, {
+        res = await fetch(`${API_URL}/analyze/${mode}`, {
           method: "POST",
           body: formData,
         });
