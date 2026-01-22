@@ -1,5 +1,7 @@
 # 🛡️ OpenGuard AI
 
+⭐ If this project helps you, please consider starring it.
+
 **OpenGuard AI** is an open-source, multimodal AI content detection framework designed to identify **harmful, unsafe, and policy-violating content** across **text, images, audio, and video**.  
 It is inspired by large-scale content moderation systems used in modern social media platforms.
 
