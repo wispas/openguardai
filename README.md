@@ -5,6 +5,8 @@ It is inspired by large-scale content moderation systems used in modern social m
 
 The project focuses on **clean architecture, explainability, and scalability**, making it suitable for research, portfolios, and future production systems.
 
+![OpenGuard AI Banner](docs/images/logo.png)
+
 ---
 🌍 Live Deployment
 
