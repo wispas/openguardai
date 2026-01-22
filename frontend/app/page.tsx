@@ -100,7 +100,11 @@ export default function Home() {
             height={100}
           />
 
-            <h1 className="text-xl font-bold">OpenGuard AI</h1>
+        <div className="text-gray-900">
+          <h1 className="text-2xl font-bold">OpenGuard AI</h1>
+          <p className="text-gray-700">Analyze content</p>
+        </div>
+
           </div>
 
           <button
@@ -128,7 +132,8 @@ export default function Home() {
               setMode(e.target.value as Mode);
               reset();
             }}
-            className="border p-2 rounded mb-4 w-full"
+            className="border p-2 rounded mb-4 w-full
+             text-gray-900 bg-white"
           >
             <option value="text">Text</option>
             <option value="image">Image</option>
@@ -138,7 +143,9 @@ export default function Home() {
 
           {mode === "text" ? (
             <textarea
-              className="w-full border rounded p-3 mb-3"
+              className="w-full border rounded p-3 mb-3
+             text-gray-900 placeholder-gray-400
+             focus:outline-none focus:ring"
               rows={4}
               placeholder="Enter text to analyze..."
               value={text}
