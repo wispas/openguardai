@@ -46,6 +46,7 @@ export default function Home() {
       let res;
 
       if (mode === "text") {
+        // res = await fetch("http://127.0.0.1:8000/analyze/text", {
         res = await fetch(`${API_URL}/analyze/text`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -55,6 +56,7 @@ export default function Home() {
         const formData = new FormData();
         formData.append("file", file as File);
 
+        // res = await fetch(`http://127.0.0.1:8000/analyze/${mode}`, {
         res = await fetch(`${API_URL}/analyze/${mode}`, {
           method: "POST",
           body: formData,
@@ -109,7 +111,7 @@ export default function Home() {
 
           <button
             onClick={handleLogout}
-            className="text-sm border px-4 py-2 rounded hover:bg-gray-100"
+            className="text-sm border px-4 py-2 rounded hover:bg-gray-100 text-gray-900"
           >
             Logout
           </button>
@@ -118,10 +120,10 @@ export default function Home() {
 
       {/* DASHBOARD */}
       <main className="max-w-7xl mx-auto px-6 py-10">
-        <h2 className="text-2xl font-semibold mb-2">
+      <h2 className="text-2xl font-semibold mb-2 text-gray-900">
           Content Moderation Dashboard
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-700 mb-6">
           Analyze and moderate text, image, video, and audio content
         </p>
 
@@ -170,7 +172,7 @@ export default function Home() {
               {loading ? "Analyzing..." : "Analyze"}
             </button>
 
-            <button onClick={reset} className="border px-4 py-2 rounded">
+            <button onClick={reset} className="border px-4 py-2 rounded text-gray-900">
               Reset
             </button>
           </div>
@@ -183,18 +185,18 @@ export default function Home() {
                   : "border-green-500 bg-green-50"
               }`}
             >
-              <p className="font-semibold mb-1">
+              <p className="font-semibold mb-1 text-gray-900">
                 Status:{" "}
                 <span className={isToxic ? "text-red-600" : "text-green-600"}>
                   {result.label.toUpperCase()}
                 </span>
               </p>
 
-              <p className="text-sm mb-2">
+              <p className="text-sm mb-2 text-gray-800">
                 Recommended Action: <b>{result.action}</b>
               </p>
 
-              <div className="text-sm mb-1">Confidence</div>
+              <div className="text-sm mb-1 text-gray-700">Confidence</div>
               <div className="w-full bg-gray-200 rounded h-3">
                 <div
                   className={`h-3 rounded ${
@@ -204,7 +206,7 @@ export default function Home() {
                 />
               </div>
 
-              <p className="text-xs mt-1">
+              <p className="text-xs mt-1 text-gray-700">
                 {(result.confidence * 100).toFixed(1)}%
               </p>
             </div>
